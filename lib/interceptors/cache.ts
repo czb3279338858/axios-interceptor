@@ -10,6 +10,7 @@ const cache = new Map<string, any>()
  * @param config 
  */
 export function requestCache(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
+
   if (config._cache) {
     const key = getRequestKey(config)
     const response = cache.get(key)

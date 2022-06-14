@@ -4,16 +4,22 @@ import { buildResponseCache, buildResponseInterceptor, requestCache, requestDebo
 import { buildRequestWaitToken } from "../lib/interceptors/waitToken";
 
 const selfAxios = axios.create();
-const headerTokenKey = 'Oauth2-Token'
+const headerTokenKey = 'Oauth2-AccessToken'
 const getToken = () => {
     return Cookies.get(headerTokenKey) || ''
 }
-const setToken = async () => {
-    setTimeout(() => {
-        Cookies.set(headerTokenKey, 'token')
-    }, 1000);
+const setToken = () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            selfAxios.defaults.headers.common = {
+                ...selfAxios.defaults.headers.common,
+                [headerTokenKey]: '0c8b01adc6d252132d3e50b1e9481472v'
+            }
+            resolve('')
+        }, 10000);
+    })
 }
-const baseURL = ''
+const baseURL = 'https://apigatewayver.oppein.com/'
 const timeout = 12000
 /**
  * 未登录跳转登录页面
@@ -110,7 +116,7 @@ function initSelfAxios() {
     /**
      * 响应时，缓存 _cache === true 的接口的响应数据
      */
-    selfAxios.interceptors.response.use(buildResponseCache({ statusKey: 'code', successCode: '10000' }))
+    selfAxios.interceptors.response.use(buildResponseCache({ statusKey: 'code', successCode: '100000' }))
     /**
      * 响应时对所有被防抖的接口进行响应
      */
@@ -119,3 +125,17 @@ function initSelfAxios() {
 
 initSelfAxios()
 
+
+const cs = async () => {
+    const getUser = async () => {
+        return await selfAxios.get('/ucenterapi/uc/internal/common/getCurrentUser', {
+            params: { platformType: 'MTDS' }, _cache: true, headers: {
+                AppCode: 'MTDS',
+                SubAppCode: 'MTDSAP009'
+            }
+        })
+    }
+    getUser()
+    getUser()
+}
+cs()
