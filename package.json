@@ -7,12 +7,21 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "peerDependencies": {
+    "axios": "^0.27.2"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/js-cookie": "^3.0.2",
+    "@types/lodash": "^4.14.182",
     "@vitejs/plugin-vue": "^2.3.3",
+    "js-cookie": "^3.0.1",
     "typescript": "^4.5.4",
     "vite": "^2.9.9",
     "vue-tsc": "^0.34.7"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "qs": "^6.10.5"
   }
 }
