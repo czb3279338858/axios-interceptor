@@ -1,5 +1,5 @@
-import { ref, Ref } from '@vue/composition-api'
 import _ from 'lodash'
+import { ref, Ref } from 'vue'
 import { axiosDict, UCDictCacheCO } from '../request/axiosDict'
 
 

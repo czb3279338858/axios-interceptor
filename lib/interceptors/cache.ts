@@ -1,5 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getRequestKey } from '../getRequestKey';
+import { isOriginalAdapter } from '../isOriginalAdapter';
 /**
  * 缓存
  */
@@ -10,17 +11,18 @@ const cache = new Map<string, any>()
  * @param config 
  */
 export function requestCache(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
-
   if (config._cache) {
     const key = getRequestKey(config)
     const response = cache.get(key)
     if (response) {
       return {
         ...config,
-        adapter: async () => {
+        adapter: isOriginalAdapter(config.adapter) ? () => {
           return response
-        }
+        } : config.adapter
       }
+    } else {
+      return config
     }
   }
   return config
@@ -39,7 +41,9 @@ export function buildResponseCache(arg?: {
     const { config, data } = response
     if (config._cache && response.status === 200 && (!arg || data[arg.statusKey] === arg.successCode)) {
       const key = getRequestKey(config)
-      cache.set(key, response)
+      if (!cache.get(key)) {
+        cache.set(key, response)
+      }
     }
     return response
   }

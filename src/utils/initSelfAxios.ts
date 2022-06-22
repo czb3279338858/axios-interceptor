@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 import { buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce } from "../../lib";
 import { buildRequestWaitToken } from "../../lib/interceptors/waitToken";
+import { ResponseStatus } from "../type/ResponseStatus";
 
 /**
  * 例子
@@ -19,21 +20,6 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
   const getToken = () => {
     return Cookies.get(headerTokenKey) || ''
   }
-  /**
-   * 设置 token 的方法，这里的 setTimeout 只是对异步的一种模拟
-   * @returns 
-   */
-  const setToken = () => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        selfAxios.defaults.headers.common = {
-          ...selfAxios.defaults.headers.common,
-          [headerTokenKey]: 'c627a63d9b9fd894600d7cae72eafbdcv'
-        }
-        resolve('')
-      }, 10000);
-    })
-  }
   const baseURL = 'https://apigatewayver.oppein.com/'
 
   selfAxios.defaults.baseURL = baseURL
@@ -48,6 +34,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
   selfAxios.defaults.headers.common = {
     ...selfAxios.defaults.headers.common,
     [headerTokenKey]: getToken(),
+    'Content-Type': 'application/x-www-form-urlencoded'
   }
   selfAxios.defaults.headers.post = {
     ...selfAxios.defaults.headers.post,
@@ -64,21 +51,31 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
 
   // 以下为请求拦截器，越晚 use 的越早被调用
   /**
-   * 为 get 请求添加时间戳，这个拦截器会修改 config，为了保证正确获取请求唯一值，内部获取请求唯一标志的方法 getRequestKey  在获取唯一值时会置空 params._timeStamp
+   * 为 get 请求添加时间戳，这个拦截器会修改 config
    * 常用
    */
   selfAxios.interceptors.request.use(requestGetAddTimeStamp)
+
   /**
    * 防抖拦截器，当同一个请求未返回时，不再发起新的请求
    * 核心，需配合响应拦截器使用
    */
   selfAxios.interceptors.request.use(requestDebounce)
+
   /**
    * 缓存拦截器，请求前查看是否有缓存
    * axios.config 中新增参数 _cache:boolean，用于控制当前接口数据是否缓存
    * 核心，需配合响应拦截器使用
    */
   selfAxios.interceptors.request.use(requestCache)
+
+  /**
+   * 自行转化 data
+   * 当请求头 Content-Type 是 application/x-www-form-urlencoded 时，数据转换为 form-urlencoded，否则转换为json
+   * 必须：影响缓存、防抖拦截器中获取请求唯一标志
+   */
+  selfAxios.interceptors.request.use(requestFormUrlencoded)
+
   /**
    * 请求前检查请求头中 token 是否存在，如果不存在等待异步方法 setToken 执行结束后才发起请求
    * 适用于企微、个微 需要异步获取 token 的 h5 页面
@@ -86,16 +83,29 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
    * axios.config 中新增参数 _needToken:boolean，用于控制当前接口是否不需要校验 token
    */
   selfAxios.interceptors.request.use(buildRequestWaitToken({
-    headerTokenKey: headerTokenKey,
-    setToken: setToken,
+    checkToken: (config) => {
+      return !!config.headers?.[headerTokenKey]
+    },
+    initToken: () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Cookies.set(headerTokenKey, 'c627a63d9b9fd894600d7cae72eafbdcv')
+          resolve('')
+        }, 3000);
+      })
+    },
+    updateConfig: (config) => {
+      return {
+        ...config,
+        headers: {
+          ...config.headers,
+          [headerTokenKey]: 'c627a63d9b9fd894600d7cae72eafbdcv'
+        }
+      }
+    },
     currentAxios: selfAxios
   }))
-  /**
-   * 自行转化 data
-   * 当请求头 Content-Type 是 application/x-www-form-urlencoded 时，数据转换为 form-urlencoded，否则转换为json
-   * 必须：影响缓存、防抖拦截器中获取请求唯一标志
-   */
-  selfAxios.interceptors.request.use(requestFormUrlencoded)
+
   /**
    * "axios": "~0.27.2" 请求拦截器中的 config 和它提供的类型不一致。该拦截器修正 config
    * 不一致主要表现为 config.header 没有合并
@@ -105,12 +115,14 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
 
 
 
+
   // 以下为响应拦截器，越早 use 的越早被调用
   /**
    * 响应时，当参数中 _cache === true 时，缓存接口的响应数据
    * 核心，需配合请求拦截器使用
    */
-  selfAxios.interceptors.response.use(buildResponseCache({ statusKey: 'code', successCode: '100000' }))
+  selfAxios.interceptors.response.use(buildResponseCache({ statusKey: 'code', successCode: ResponseStatus.success }))
+
   /**
    * 响应时，对所有被防抖的接口进行响应
    * 核心，需配合请求拦截器使用

@@ -18,7 +18,6 @@ export function requestRepairConfig(config: AxiosRequestConfig<any>): AxiosReque
     delete selfHeaders[key]
   })
   const newHeaders = Object.assign({}, commonHeaders, methodHeaders, selfHeaders)
-
   return {
     ...config,
     headers: newHeaders

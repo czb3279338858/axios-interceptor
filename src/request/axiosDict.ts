@@ -17,6 +17,11 @@ export interface UCDictCacheCO {
  * @param params 
  */
 export async function axiosDict(params: { dictTypeList: string[] }) {
-  const { data: { data } } = await selfAxios.post<Response<Record<string, UCDictCacheCO[]>>>('/mtdsbase/internal/dict/getDictCacheMapByTypeToPost', params)
+  const { data: { data } } = await selfAxios.post<Response<Record<string, UCDictCacheCO[]>>>('/mtdsbase/internal/dict/getDictCacheMapByTypeToPost', params, {
+    headers: { // 测试接口要求的数据，非必须
+      AppCode: 'MTDS',
+      SubAppCode: 'MTDSAP009'
+    }
+  })
   return data
 }

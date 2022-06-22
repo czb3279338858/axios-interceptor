@@ -1,10 +1,8 @@
-import { initSelfAxios } from "./utils/initSelfAxios"
-import { axiosUser } from "./request/axiosUser"
-import { selfAxios } from "./selfAxios"
+import { createApp } from 'vue'
+import App from './App.vue'
+import { selfAxios } from './selfAxios'
+import { initSelfAxios } from './utils/initSelfAxios'
 
 initSelfAxios(selfAxios)
-const cs = async () => {
-    await axiosUser()
-    axiosUser()
-}
-cs()
+
+createApp(App).mount('#app')

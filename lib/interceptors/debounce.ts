@@ -1,5 +1,6 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getRequestKey } from '../getRequestKey';
+import { isOriginalAdapter } from '../isOriginalAdapter';
 
 const requestingAdapter = new Map<string, () => Promise<any>>()
 const requestingResolve = new Map<string, (value?: AxiosResponse<any, any>) => void>()
@@ -13,11 +14,13 @@ export function requestDebounce(config: AxiosRequestConfig<any>): AxiosRequestCo
   const key = getRequestKey(config)
   const adapter = requestingAdapter.get(key)
   if (adapter) {
+    // 当前接口正在请求中，直接返回 promise
     return {
       ...config,
-      adapter
+      adapter: isOriginalAdapter(config.adapter) ? adapter : config.adapter
     }
   } else {
+    // 设置当前接口正在请求中并发起请求
     const promise = new Promise<any>((resolve, reject) => {
       requestingResolve.set(key, resolve)
     })
@@ -25,7 +28,6 @@ export function requestDebounce(config: AxiosRequestConfig<any>): AxiosRequestCo
     requestingAdapter.set(key, adapter)
     return config
   }
-
 }
 
 /**
