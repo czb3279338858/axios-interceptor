@@ -1,6 +1,13 @@
 <template>
+  <div>123</div>
   <div>
-    <!-- {{ transDict("category_chugui_PTDDFBWL", "ROOT_product_category") }} -->
+    {{ transDict("category_chugui_PTDDFBWL", "ROOT_product_category") }}
+  </div>
+  <div>
+    {{ transDict("category_chugui_CFXJJ", "ROOT_product_category") }}
+  </div>
+  <div>
+    {{ transDict("product_channel_194", "ROOT_ProductChannel") }}
   </div>
 </template>
 
@@ -30,26 +37,35 @@ const firstWait = async () => {
   axiosUser().then((res) => {
     console.log("firstWait-2", res);
   });
-  axiosUser().then((res) => {
-    console.log("firstWait-2", res);
+};
+const dictAllNeedWait = async () => {
+  getDict("ROOT_product_category").then((res) => {
+    console.log("dictAllNeedWait-1", res);
   });
-  axiosUser().then((res) => {
-    console.log("firstWait-2", res);
+  getDict("ROOT_ProductChannel").then((res) => {
+    console.log("dictAllNeedWait-2", res);
   });
-  axiosUser().then((res) => {
-    console.log("firstWait-2", res);
+};
+const dictLastWait = async () => {
+  getDict("ROOT_product_category").then((res) => {
+    console.log("dictLastWait-1", res);
   });
-  axiosUser().then((res) => {
-    console.log("firstWait-2", res);
+  const res = await getDict("ROOT_ProductChannel");
+  console.log("dictLastWait-2", res);
+};
+const dictFirstWait = async () => {
+  const res = await getDict("ROOT_product_category");
+  console.log("dictFirstWait-1", res);
+  getDict("ROOT_ProductChannel").then((res) => {
+    console.log("dictFirstWait-2", res);
   });
 };
 onMounted(() => {
-  // allNeedWait();
-  // lastWait();
+  allNeedWait();
+  lastWait();
   firstWait();
-  // getDict("ROOT_product_category");
-  // getDict("ROOT_ProductChannel");
-  // await getDict("ROOT_product_category");
-  // await getDict("ROOT_ProductChannel");
+  dictAllNeedWait();
+  dictLastWait();
+  dictFirstWait();
 });
 </script>

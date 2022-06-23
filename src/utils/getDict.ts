@@ -12,7 +12,7 @@ const resultMap = new Map<string, Ref<UCDictCacheCO[] | null>>()
  * 准备发起请求的字典code
  * 字典接口允许一次请求多个字典列表
  */
-const requestParams: string[] = []
+const requestParams: Set<string> = new Set()
 /** resolve map */
 const resolveMap = new Map<string, (value: UCDictCacheCO[]) => void>()
 /** promise map */
@@ -20,7 +20,7 @@ const resultPromiseMap = new Map<string, Promise<UCDictCacheCO[]>>()
 
 const reqDict = async () => {
   const codes = [...requestParams]
-  requestParams.length = 0
+  requestParams.clear()
   const res = await axiosDict({ dictTypeList: codes })
   Object.keys(res).forEach(code => {
     const dict = res[code]
@@ -61,7 +61,7 @@ export function syncGetDict(code: string): Ref<UCDictCacheCO[] | null> {
   const resolve = ref(null)
   resultMap.set(code, resolve)
   // 往节流参数中塞值
-  requestParams.push(code)
+  requestParams.add(code)
   // 发起节流请求
   debounceAxiosDict()
   return resultMap.get(code) as Ref<UCDictCacheCO[] | null>
@@ -79,7 +79,7 @@ export async function getDict(code: string): Promise<UCDictCacheCO[]> {
   const resultPromise = resultPromiseMap.get(code)
   if (resultPromise) return await resultPromise
   // 如果都没有
-  requestParams.push(code)
+  requestParams.add(code)
   const promise = new Promise<UCDictCacheCO[]>((resolve, reject) => {
     resolveMap.set(code, resolve)
   })
