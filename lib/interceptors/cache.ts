@@ -11,15 +11,16 @@ const cache = new Map<string, any>()
  * @param config 
  */
 export function requestCache(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
+  if (!isOriginalAdapter(config.adapter)) return config
   if (config._cache) {
     const key = getRequestKey(config)
     const response = cache.get(key)
     if (response) {
       return {
         ...config,
-        adapter: isOriginalAdapter(config.adapter) ? () => {
+        adapter: async () => {
           return response
-        } : config.adapter
+        }
       }
     } else {
       return config

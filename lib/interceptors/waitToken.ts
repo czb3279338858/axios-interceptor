@@ -21,6 +21,7 @@ export function buildRequestWaitToken(arg: {
   currentAxios: Axios
 }) {
   return function (config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
+    if (!isOriginalAdapter(config.adapter)) return config
     const { checkToken, initToken, currentAxios, updateConfig } = arg
     const check = checkToken(config)
     if (check || config._needToken) return config
@@ -32,11 +33,11 @@ export function buildRequestWaitToken(arg: {
         waitingConfig.forEach((config, key) => {
           currentAxios.request(updateConfig(config)).then(response => {
             waitingResolve.get(key)?.(response)
+            waitingResolve.delete(key)
           })
         })
       }).finally(() => {
         waitingConfig.clear()
-        waitingResolve.clear()
       })
     }
 
@@ -47,7 +48,7 @@ export function buildRequestWaitToken(arg: {
     })
     return {
       ...config,
-      adapter: isOriginalAdapter(config.adapter) ? () => promise : config.adapter
+      adapter: () => promise
     }
   }
 }

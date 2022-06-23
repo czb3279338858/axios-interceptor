@@ -89,7 +89,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
     initToken: () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          // Cookies.set(headerTokenKey, 'c627a63d9b9fd894600d7cae72eafbdcv')
+          Cookies.set(headerTokenKey, '6854f65a3f835a5db3472d96cc517c33v')
           resolve('')
         }, 3000);
       })
@@ -99,7 +99,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
         ...config,
         headers: {
           ...config.headers,
-          [headerTokenKey]: 'c627a63d9b9fd894600d7cae72eafbdcv'
+          [headerTokenKey]: getToken()
         }
       }
     },

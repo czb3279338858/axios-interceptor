@@ -11,13 +11,14 @@ const requestingResolve = new Map<string, (value?: AxiosResponse<any, any>) => v
  * @param config 
  */
 export function requestDebounce(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
+  if (!isOriginalAdapter(config.adapter)) return config
   const key = getRequestKey(config)
   const adapter = requestingAdapter.get(key)
   if (adapter) {
     // 当前接口正在请求中，直接返回 promise
     return {
       ...config,
-      adapter: isOriginalAdapter(config.adapter) ? adapter : config.adapter
+      adapter
     }
   } else {
     // 设置当前接口正在请求中并发起请求
