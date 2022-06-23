@@ -1,11 +1,10 @@
 import { AxiosRequestConfig } from "axios";
 import _ from "lodash";
-
-export let clearKeys: string[] = []
 /**
- * 通过json化请求配置，获取一个请求的唯一标识，需要repairConfig拦截器先提供config修正
- * @param config 
+ * 供其他拦截器设定 config 中哪些 path 需要设置为 null，以保证 getRequestKey 的唯一性
  */
+export let clearKeys: string[] = []
+
 export function getRequestKey(config: AxiosRequestConfig<any>) {
   const keyConfig: AxiosRequestConfig<any> = JSON.parse(JSON.stringify(config))
   clearKeys.forEach(path => {

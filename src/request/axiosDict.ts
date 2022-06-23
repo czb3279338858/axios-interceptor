@@ -6,7 +6,6 @@ export interface UCDictCacheCO {
    * 数据值
    */
   value: string;
-
   /**
    * 标签名
    */
@@ -16,9 +15,9 @@ export interface UCDictCacheCO {
  * 获取字典
  * @param params 
  */
-export async function axiosDict(params: { dictTypeList: string[] }) {
+export async function axiosDict(params: { dictCodeList: string[] }) {
   const { data: { data } } = await selfAxios.post<Response<Record<string, UCDictCacheCO[]>>>('/mtdsbase/internal/dict/getDictCacheMapByTypeToPost', params, {
-    headers: { // 测试接口要求的数据，非必须
+    headers: { // 测试接口要求的参数
       AppCode: 'MTDS',
       SubAppCode: 'MTDSAP009'
     }

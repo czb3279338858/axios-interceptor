@@ -1,5 +1,5 @@
 /**
- * 响应中status字段的值
+ * 响应中 status 字段的值
  */
 export enum ResponseStatus {
   success = '100000',
