@@ -21,7 +21,7 @@ const resultPromiseMap = new Map<string, Promise<UCDictCacheCO[]>>()
 const reqDict = async () => {
   const codes = [...requestParams]
   requestParams.clear()
-  const res = await axiosDict({ dictCodeList: codes })
+  const res = await axiosDict({ dictTypeList: codes })
   Object.keys(res).forEach(code => {
     const dict = res[code]
     // 响应后 resolve 正在请求中
