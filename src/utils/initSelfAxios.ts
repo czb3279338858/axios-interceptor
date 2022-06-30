@@ -90,7 +90,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
     initToken: () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          Cookies.set(headerTokenKey, '6854f65a3f835a5db3472d96cc517c33v')
+          Cookies.set(headerTokenKey, 'd66ceee5c540e0e299eefb2d0f1054adv')
           resolve('')
         }, 3000);
       })

@@ -10,9 +10,19 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts","lib/**/*.ts","lib/**/*.d.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "lib/**/*.ts",
+    "lib/**/*.d.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
