@@ -1,5 +1,5 @@
 {
-  "name": "axios-interceptors",
+  "name": "axios-interceptor",
   "files": [
     "dist"
   ],
