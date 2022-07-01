@@ -1,3 +1,4 @@
+export { buildRequestWaitToken } from "./interceptors/waitToken";
 export { requestRepairConfig } from "./interceptors/repairConfig";
 export { requestGetAddTimeStamp } from "./interceptors/getAddTimeStamp";
 export { requestFormUrlencoded } from "./interceptors/formUrlencoded";
