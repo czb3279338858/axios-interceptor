@@ -1,7 +1,6 @@
 import { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
-import { buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce } from "../../lib";
-import { buildRequestWaitToken } from "../../lib/interceptors/waitToken";
+import { buildRequestWaitToken, buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce } from "../../lib";
 import { ResponseStatus } from "../type/ResponseStatus";
 
 export function initSelfAxios(selfAxios: AxiosInstance) {
