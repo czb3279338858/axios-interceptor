@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import qs from 'qs'
+import { stringify } from 'qs'
 
 export function requestFormUrlencoded(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
   const headers = config.headers
@@ -8,7 +8,7 @@ export function requestFormUrlencoded(config: AxiosRequestConfig<any>): AxiosReq
   if (contentType === 'application/x-www-form-urlencoded' && (typeof data !== 'string')) {
     return {
       ...config,
-      data: qs.stringify(data)
+      data: stringify(data)
     }
   }
   if (contentType === 'application/json' && typeof data !== 'string') {
