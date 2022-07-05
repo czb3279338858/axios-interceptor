@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { debounce } from 'lodash'
 import { ref, Ref } from 'vue'
 import { axiosDict, UCDictCacheCO } from '../request/axiosDict'
 
@@ -47,7 +47,7 @@ const reqDict = async () => {
 /**
  * 节流后的请求
  */
-const debounceAxiosDict = _.debounce(reqDict, 600)
+const debounceAxiosDict = debounce(reqDict, 600)
 
 /**
  * 同步获取字典

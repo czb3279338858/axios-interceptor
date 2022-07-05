@@ -86,7 +86,7 @@ let clearKeys = [];
 function getRequestKey(config) {
   const keyConfig = JSON.parse(JSON.stringify(config));
   clearKeys.forEach((path) => {
-    lodashSet(keyConfig, path, null);
+    lodashSet(config, path, null);
   });
   return JSON.stringify(keyConfig);
 }
