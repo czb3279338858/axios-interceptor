@@ -8,7 +8,7 @@ export let clearKeys: string[] = []
 export function getRequestKey(config: AxiosRequestConfig<any>) {
   const keyConfig: AxiosRequestConfig<any> = JSON.parse(JSON.stringify(config))
   clearKeys.forEach(path => {
-    lodashSet(config, path, null)
+    lodashSet(keyConfig, path, null)
   })
   return JSON.stringify(keyConfig)
 }

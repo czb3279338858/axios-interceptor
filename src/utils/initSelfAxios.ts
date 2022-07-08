@@ -32,7 +32,9 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
   selfAxios.defaults.headers.common = {
     ...selfAxios.defaults.headers.common,
     [headerTokenKey]: getToken(),
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/x-www-form-urlencoded',
+    AppCode: 'MTDS',
+    SubAppCode: 'MTDSAP009'
   }
   selfAxios.defaults.headers.post = {
     ...selfAxios.defaults.headers.post,
@@ -89,7 +91,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
     initToken: () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          Cookies.set(headerTokenKey, 'd66ceee5c540e0e299eefb2d0f1054adv')
+          Cookies.set(headerTokenKey, 'a7732491a31f944ef8ee988df75f920bv')
           resolve('')
         }, 3000);
       })

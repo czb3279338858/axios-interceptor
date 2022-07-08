@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "@vue/runtime-core";
+import { axiosUpdateUser } from "./request/axiosUpdateUser";
 import { axiosUser } from "./request/axiosUser";
 import { getDict } from "./utils/getDict";
 import { transDict } from "./utils/transDict";
@@ -60,6 +61,18 @@ const dictFirstWait = async () => {
     console.log("dictFirstWait-2", res);
   });
 };
+const cleanCache = async () => {
+  const user = await axiosUser();
+  console.log("更新前", user.weixin);
+  await axiosUpdateUser({
+    id: user.id,
+    weixin: new Date().getTime().toString(),
+  });
+  setTimeout(async () => {
+    const newUser = await axiosUser();
+    console.log("更新后", newUser.weixin);
+  }, 1000);
+};
 onMounted(() => {
   allNeedWait();
   lastWait();
@@ -67,5 +80,6 @@ onMounted(() => {
   dictAllNeedWait();
   dictLastWait();
   dictFirstWait();
+  cleanCache();
 });
 </script>
