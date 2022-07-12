@@ -86,7 +86,7 @@ let clearKeys = [];
 function getRequestKey(config) {
   const keyConfig = JSON.parse(JSON.stringify(config));
   clearKeys.forEach((path) => {
-    lodashSet(config, path, null);
+    lodashSet(keyConfig, path, null);
   });
   return JSON.stringify(keyConfig);
 }
@@ -163,11 +163,12 @@ function responseDebounce(response) {
   return response;
 }
 const cache = /* @__PURE__ */ new Map();
+const cleanMatchFunMap = /* @__PURE__ */ new Map();
 function requestCache(config) {
   if (!isDefaultAdapter(config.adapter))
     return config;
+  const key = getRequestKey(config);
   if (config._cache) {
-    const key = getRequestKey(config);
     const response = cache.get(key);
     if (response) {
       return __spreadProps(__spreadValues({}, config), {
@@ -179,17 +180,32 @@ function requestCache(config) {
       return config;
     }
   }
+  if (config._cleanMatchFun) {
+    cleanMatchFunMap.set(key, config._cleanMatchFun);
+  }
   return config;
 }
 function buildResponseCache(arg) {
   return (response) => {
     const { config, data } = response;
-    if (config._cache && response.status === 200 && (!arg || data[arg.statusKey] === arg.successCode)) {
-      const key = getRequestKey(config);
-      if (!cache.get(key)) {
-        cache.set(key, response);
+    const key = getRequestKey(config);
+    if (response.status === 200 && (!arg || data[arg.statusKey] === arg.successCode)) {
+      if (config._cache) {
+        if (!cache.get(key)) {
+          cache.set(key, response);
+        }
+      }
+      const cleanMatchFun = cleanMatchFunMap.get(key);
+      if (cleanMatchFun) {
+        cache.forEach((v, k) => {
+          const configObj = JSON.parse(k);
+          if (cleanMatchFun(configObj)) {
+            cache.delete(k);
+          }
+        });
       }
     }
+    cleanMatchFunMap.delete(key);
     return response;
   };
 }
