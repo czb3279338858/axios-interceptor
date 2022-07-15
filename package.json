@@ -4,10 +4,10 @@
     "dist"
   ],
   "main": "./dist/axios-interceptor.umd.js",
-  "module": "./dist/axios-interceptor.mjs",
+  "module": "./dist/axios-interceptor.es.js",
   "exports": {
     ".": {
-      "import": "./dist/axios-interceptor.mjs",
+      "import": "./dist/axios-interceptor.es.js",
       "require": "./dist/axios-interceptor.umd.js"
     }
   },
