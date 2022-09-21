@@ -1,3 +1,5 @@
+export { responseDebounceErr } from "./interceptors/debounce";
+
 export { buildRequestWaitToken } from "./interceptors/waitToken";
 
 
@@ -14,6 +16,5 @@ export { requestDebounce } from "./interceptors/debounce";
 export { buildResponseCache } from "./interceptors/cache";
 
 export { requestCache } from "./interceptors/cache";
-
 
 

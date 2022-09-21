@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 import { buildRequestWaitToken, buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce } from "../../lib";
+import { responseDebounceErr } from "../../lib/interceptors/debounce";
 import { ResponseStatus } from "../type/ResponseStatus";
 
 export function initSelfAxios(selfAxios: AxiosInstance) {
@@ -91,7 +92,7 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
     initToken: () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          Cookies.set(headerTokenKey, 'a7732491a31f944ef8ee988df75f920bv')
+          Cookies.set(headerTokenKey, '5e6caf63db58222ae8d50943ae83662cv')
           resolve('')
         }, 3000);
       })
@@ -128,5 +129,5 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
    * 响应时，对所有被防抖的接口进行响应
    * 注意：需要配合请求拦截 requestDebounce 使用
    */
-  selfAxios.interceptors.response.use(responseDebounce)
+  selfAxios.interceptors.response.use(responseDebounce, responseDebounceErr)
 }

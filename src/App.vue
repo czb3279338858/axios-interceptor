@@ -9,6 +9,7 @@
   <div>
     {{ transDict("product_channel_194", "ROOT_ProductChannel") }}
   </div>
+  <button @click="doSome">111</button>
 </template>
 
 <script setup lang="ts">
@@ -74,12 +75,16 @@ const cleanCache = async () => {
   }, 1000);
 };
 onMounted(() => {
-  allNeedWait();
-  lastWait();
-  firstWait();
-  dictAllNeedWait();
-  dictLastWait();
-  dictFirstWait();
-  cleanCache();
+  // allNeedWait();
+  // lastWait();
+  // firstWait();
+  // dictAllNeedWait();
+  // dictLastWait();
+  // dictFirstWait();
+  // cleanCache();
 });
+const doSome = async () => {
+  debugger;
+  const user = await axiosUser();
+};
 </script>

@@ -34,7 +34,7 @@ export function buildResponseCache(arg?: {
   return (response: AxiosResponse<any, any>) => {
     const { config, data } = response
     const key = getRequestKey(config)
-    if (response.status === 200 && (!arg || data[arg.statusKey] === arg.successCode)) {
+    if (response.status >= 200 && response.status < 300 && (!arg || data[arg.statusKey] === arg.successCode)) {
       if (config._cache) {
         if (!cache.get(key)) {
           cache.set(key, response)
