@@ -1,4 +1,4 @@
-import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getRequestKey } from '../getRequestKey';
 import { isDefaultAdapter } from '../isOriginalAdapter';
 
@@ -42,14 +42,16 @@ export function responseDebounce(response: AxiosResponse<any, any>) {
     }
     return response
   } else {
-    responseDebounceErr(new AxiosError(`Request failed with status code ${response.status}`, 'ERR_BAD_REQUEST', response.config, response.request, response))
+    responseDebounceErr({
+      config: response.config,
+    })
   }
 }
 /**
  * 请求错误时删除对应的resolve对象
  * @param error 
  */
-export function responseDebounceErr(error: AxiosError) {
+export function responseDebounceErr(error: { config: AxiosRequestConfig }) {
   const key = getRequestKey(error.config)
   const resolve = requestingResolve.get(key)
   if (resolve) {
