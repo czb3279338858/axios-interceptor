@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getRequestKey } from '../getRequestKey';
 import { isDefaultAdapter } from '../isOriginalAdapter';
 
@@ -44,6 +44,7 @@ export function responseDebounce(response: AxiosResponse<any, any>) {
   } else {
     responseDebounceErr({
       config: response.config,
+      status: `${response.status}`
     })
   }
 }
@@ -51,12 +52,16 @@ export function responseDebounce(response: AxiosResponse<any, any>) {
  * 请求错误时删除对应的resolve对象
  * @param error 
  */
-export function responseDebounceErr(error: { config: AxiosRequestConfig }) {
+export function responseDebounceErr(error: { config: AxiosRequestConfig, status?: string }) {
   const key = getRequestKey(error.config)
   const resolve = requestingResolve.get(key)
   if (resolve) {
     requestingAdapter.delete(key)
     requestingResolve.delete(key)
   }
-  throw error
+  if (error.status) {
+    throw new Error(`Request failed with status code ${error.status}`)
+  } else {
+    throw new Error('Network Error')
+  }
 }
