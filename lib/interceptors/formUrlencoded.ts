@@ -1,6 +1,10 @@
 import { AxiosRequestConfig } from 'axios'
 import { qsStringify } from '../qsStringify'
-
+/**
+ * 根据 Content-Type 转化 data 格式
+ * @param config 
+ * @returns 
+ */
 export function requestFormUrlencoded(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
   const headers = config.headers
   const contentType = headers?.['Content-Type']

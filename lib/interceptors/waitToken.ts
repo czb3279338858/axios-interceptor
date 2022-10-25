@@ -5,7 +5,11 @@ const waitingConfig: Map<number, AxiosRequestConfig<any>> = new Map()
 const waitingResolve: Map<number, ((value: AxiosResponse<any, any> | PromiseLike<AxiosResponse<any, any>>) => void)> = new Map()
 let currentIndex = 0
 
-
+/**
+ * 暂存所有请求，进行token的检查及等待token初始化，才发起暂存的请求
+ * @param arg 
+ * @returns 
+ */
 export function buildRequestWaitToken(arg: {
   /** 检查 token */
   checkToken: (config: AxiosRequestConfig<any>) => boolean,

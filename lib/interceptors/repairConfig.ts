@@ -1,6 +1,10 @@
 import { AxiosRequestConfig, HeadersDefaults } from 'axios';
 
-
+/**
+ * "axios": "~0.27.2" 请求拦截器参数 config 和它提供的类型不一致。该拦截器修正 config
+ * @param config 
+ * @returns 
+ */
 export function requestRepairConfig(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
   const selfHeaders: HeadersDefaults = config.headers as unknown as HeadersDefaults
 

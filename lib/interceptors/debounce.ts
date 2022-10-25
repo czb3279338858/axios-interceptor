@@ -5,7 +5,11 @@ import { isDefaultAdapter } from '../isOriginalAdapter';
 const requestingAdapter = new Map<string, () => Promise<any>>()
 const requestingResolve = new Map<string, (value?: AxiosResponse<any, any>) => void>()
 
-
+/**
+ * 防抖拦截器，当同一个请求未返回时，不再发起新的请求
+ * @param config 
+ * @returns 
+ */
 export function requestDebounce(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
   if (!isDefaultAdapter(config.adapter)) return config
   const key = getRequestKey(config)
@@ -28,6 +32,7 @@ export function requestDebounce(config: AxiosRequestConfig<any>): AxiosRequestCo
 }
 
 /**
+ * 响应时，对所有被防抖的接口进行响应
  * @param response 
  * @returns 
  */

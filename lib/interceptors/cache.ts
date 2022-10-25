@@ -4,7 +4,11 @@ import { isDefaultAdapter } from '../isOriginalAdapter';
 
 const cache = new Map<string, any>()
 const cleanMatchFunMap = new Map<string, Function>()
-
+/**
+ * 缓存拦截器，请求前查看是否有缓存，有缓存直接返回缓存，没有才发起请求
+ * @param config 
+ * @returns 
+ */
 export function requestCache(config: AxiosRequestConfig<any>): AxiosRequestConfig<any> {
   if (!isDefaultAdapter(config.adapter)) return config
   const key = getRequestKey(config)
@@ -26,7 +30,11 @@ export function requestCache(config: AxiosRequestConfig<any>): AxiosRequestConfi
   }
   return config
 }
-
+/**
+ * 响应时，当参数中 _cache === true 时，缓存接口的响应数据
+ * @param arg 
+ * @returns 
+ */
 export function buildResponseCache(arg?: {
   statusKey: string,
   successCode: string | number
