@@ -54,7 +54,7 @@ export function responseDebounce(response: AxiosResponse<any, any>) {
   }
 }
 /**
- * 请求错误时删除对应的resolve对象
+ * 请求错误时，删除对应resolve，被防抖接口允许再次发起
  * @param error 
  */
 export function responseDebounceErr(error: { config: AxiosRequestConfig, status?: string }) {

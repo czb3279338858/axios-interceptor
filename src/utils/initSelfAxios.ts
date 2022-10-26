@@ -1,32 +1,29 @@
 import { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
-import { buildRequestWaitToken, buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce } from "../../lib";
-import { responseDebounceErr } from "../../lib/interceptors/debounce";
+import { buildResponseCache, requestCache, requestDebounce, requestFormUrlencoded, requestGetAddTimeStamp, requestRepairConfig, responseDebounce, responseDebounceErr } from "../../lib";
 import { ResponseStatus } from "../type/ResponseStatus";
 
 export function initSelfAxios(selfAxios: AxiosInstance) {
-  /**
-   * 请求头中的 token 名
-   * 请求携带 token 有多种方式，这里仅仅是举例
-   */
+
   const headerTokenKey = 'Oauth2-AccessToken'
-
-  /**
-   * 获取 token 的方法，根据自身项目设定
-   */
-  const getToken = () => {
-    return Cookies.get(headerTokenKey) || ''
-  }
-
-  /**
-   * 请求的 baseURL，根据自身项目设定
-   */
+  const getToken = () => Cookies.get(headerTokenKey) || ''
   selfAxios.defaults.baseURL = 'https://apigatewayver.oppein.com/'
 
   /**
-  * "axios": "~0.27.2"会根据 Content-Type 类型转换参数的格式，这导致 config.data 在响应和请求中不一致
-  * 部分拦截器通过 JSON 化 config 来判断一个请求的唯一性，所以需要重定义 transformRequest 来禁止这种转换
-  * 备注：transformRequest 会在请求拦截全部执行后转换数据
+  * "axios": "~0.27.2" 会根据 Content-Type 转换参数的格式 
+  * "axios": "~0.27.2" will convert the format of parameters according to Content-Type
+  * 
+  * 这导致 config.data 在响应和请求中不一致 
+  * This causes the config.data to be inconsistent in the response and request
+  * 
+  * 该包提供的拦截器通过 JSON 化 config 来判断一个请求的唯一性
+  * The interceptor provided by the package judges the uniqueness of a request through JSONized config
+  * 
+  * 所以需要重定义 defaults.transformRequest 来禁止这种转换
+  * So you need to redefine defaults.transformRequest to disable this transformation
+  * 
+  * transformation 在所有请求拦截器被执行后执行
+  * Transformation is executed after all request interceptors are executed
   */
   selfAxios.defaults.transformRequest = [(data) => { return data }]
 
@@ -50,84 +47,98 @@ export function initSelfAxios(selfAxios: AxiosInstance) {
     "Content-Type": "application/json"
   }
 
-  // 以下为请求拦截器，越晚 use 的越早被调用
+  /**
+   * 请求拦截器，越晚 use 的越早被调用
+   * Request interceptor, the later the use is called, the earlier
+   */
+
   /**
    * 为 get 请求添加时间戳
+   * Add timestamp for get request
    */
   selfAxios.interceptors.request.use(requestGetAddTimeStamp)
 
   /**
-   * 防抖拦截器，当同一个请求未返回时，不再发起新的请求
-   * 注意：
-   *   拦截器内通过内置方法 getRequestKey 获取请求唯一值，所以需要保证在 requestRepairConfig 和 requestFormUrlencoded 后被调用
-   *   需要配合响应拦截 responseDebounce 使用
+   * 当同一个请求未返回时，不再发起新的请求
+   * When the same request does not return, no new request will be launched
+   * 
+   * 应当早于 requestRepairConfig 和 requestFormUrlencoded 被 use
+   * It should be used before requestRepairConfig and requestFormUrlencoded
+   * 
+   * 需要配合响应拦截 responseDebounce 和 responseDebounceErr 使用
+   * It needs to be used together with responseDebounce and responseDebounceErr for response interception
    */
   selfAxios.interceptors.request.use(requestDebounce)
 
   /**
-   * 缓存拦截器，请求前查看是否有缓存，有缓存直接返回缓存，没有才发起请求
-   * config 中新增参数 _cache:boolean，用于控制当前接口数据是否缓存
-   * 注意：
-   *   拦截器内通过内置方法 getRequestKey 获取请求唯一值，所以需要保证在 requestRepairConfig 和 requestFormUrlencoded 后被调用
-   *   需要配合响应拦截 buildResponseCache 使用
+   * 请求前查看是否有缓存，有缓存直接返回缓存，没有才发起请求
+   * Check whether there is a cache before making a request. If there is a cache, it will return to the cache directly. If not, the request will be made
+   * 
+   * 应当早于 requestRepairConfig 和 requestFormUrlencoded 被 use
+   * It should be used before requestRepairConfig and requestFormUrlencoded
+   * 
+   * 需要配合响应拦截 buildResponseCache 使用
+   * It needs to be used together with buildResponseCache for response interception
+   * 
+   * config 中新增参数
+   * New parameter in config
+   * 
+   * _cache:boolean:用于控制当前接口是否缓存响应
+   * _cache:boolean:Used to control whether the current interface caches responses
+   * 
+   * _cleanMatchFun:用于在当前接口响应后清空其他接口的缓存数据
+   * _cleanMatchFun:Used to clear cached data of other interfaces after the current interface responds
    */
   selfAxios.interceptors.request.use(requestCache)
 
   /**
-   * 根据 Content-Type 转化 data 格式
+   * 根据 Content-Type 转化请求参数格式
+   * Convert request parameter format according to Content-Type
+   * 
    * 当请求头 Content-Type 是 application/x-www-form-urlencoded 时，数据转换为 form-urlencoded，否则转换为 JSON
-   * 注意：需要配合设置 transformRequest 方法
-   */
+   * When the request header Content-Type is application/x-www-form-urlencoded, the data is converted to form urlencoded, otherwise it is converted to JSON
+   * 
+   * 需要配合设置 defaults.transformRequest 来使用
+   * It needs to be used together with setting defaults.transformRequest
+   * */
   selfAxios.interceptors.request.use(requestFormUrlencoded)
 
-  /**
-   * 请求前通过 checkToken 检查 token 是否存在，如果不存在等待异步方法 initToken 结束后，使用 updateConfig 更新的 config 重新发起请求
-   * 适用于 企业微信、个人微信 需要异步获取 token 的 h5 页面
-   * config 中新增参数 _needToken:boolean，用于控制当前接口是否不需要校验 token
-   */
-  selfAxios.interceptors.request.use(buildRequestWaitToken({
-    checkToken: (config) => {
-      return !!config.headers?.[headerTokenKey]
-    },
-    initToken: () => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          Cookies.set(headerTokenKey, '5e6caf63db58222ae8d50943ae83662cv')
-          resolve('')
-        }, 3000);
-      })
-    },
-    updateConfig: (config) => {
-      return {
-        ...config,
-        headers: {
-          ...config.headers,
-          [headerTokenKey]: getToken()
-        }
-      }
-    },
-    currentAxios: selfAxios
-  }))
 
   /**
-   * "axios": "~0.27.2" 请求拦截器参数 config 和它提供的类型不一致。该拦截器修正 config
-   * 不一致主要表现为 config.header 没有合并
+   * "axios": "~0.27.2" 请求拦截器和响应拦截器中 config 不一致
+   * "axios": "~0.27.2" The configs in the request interceptor and the response interceptor are inconsistent
+   * 
+   * 不一致主要表现为请求拦截器中 config.header 没有被合并
+   * Inconsistency is mainly manifested in config.header not merged
    */
   selfAxios.interceptors.request.use(requestRepairConfig)
 
 
 
 
-  // 以下为响应拦截器，越早 use 的越早被调用
   /**
-   * 响应时，当参数中 _cache === true 时，缓存接口的响应数据
-   * 注意：需要配合请求拦截 requestCache 使用
+   * 响应拦截器，越早 use 的越早被调用
+   * The earlier the response interceptor is used, the earlier it is called
+   */
+
+  /**
+   * 响应时，当参数中 _cache === true 时，缓存数据
+   * When responding, cache data when _cache === true exists in the parameter
+   * 
+   * 需要配合请求拦截 requestCache 使用
+   * It needs to be used with requestCache for request interception
    */
   selfAxios.interceptors.response.use(buildResponseCache({ statusKey: 'code', successCode: ResponseStatus.success }))
 
   /**
-   * 响应时，对所有被防抖的接口进行响应
-   * 注意：需要配合请求拦截 requestDebounce 使用
+   * 请求成功时，响应所有未被发起的请求
+   * Respond to all unsolicited requests when the request succeeds
+   * 
+   * 请求失败时，允许该接口被再次发起
+   * When the request fails, the interface is allowed to be initiated again
+   * 
+   * 需要配合请求拦截 requestDebounce 使用
+   * It needs to be used in conjunction with request interception requestDebounce
    */
   selfAxios.interceptors.response.use(responseDebounce, responseDebounceErr)
 }
