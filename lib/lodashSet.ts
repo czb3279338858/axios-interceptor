@@ -2,6 +2,10 @@ const _lodashSet = (obj: Record<string | number, any>, path: string[], value: an
   const firstPath = path[0]
   if (path.length > 1) {
     const firstObj = obj[firstPath]
+    if (firstObj === undefined) {
+      obj[firstPath] = {}
+      return _lodashSet(obj[firstPath], path.slice(1), value)
+    }
     if (typeof firstObj !== 'object' || firstObj === null) return
     return _lodashSet(firstObj, path.slice(1), value)
   } else {
