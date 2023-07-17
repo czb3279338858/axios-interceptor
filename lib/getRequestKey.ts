@@ -6,7 +6,12 @@ import { lodashSet } from "./lodashSet";
 export let clearKeys: string[] = []
 
 export function getRequestKey(config: AxiosRequestConfig<any>) {
-  const keyConfig: AxiosRequestConfig<any> = JSON.parse(JSON.stringify(config))
+  const url = new URL(config.url || '', config.baseURL)
+  const copyConfig = {
+    ...config,
+  }
+  copyConfig.url = url.toJSON()
+  const keyConfig: AxiosRequestConfig<any> = JSON.parse(JSON.stringify(copyConfig))
   clearKeys.forEach(path => {
     lodashSet(keyConfig, path, null)
   })
