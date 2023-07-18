@@ -1,41 +1,26 @@
 {
-  "name": "axios-interceptor",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/axios-interceptor.umd.js",
-  "module": "./dist/axios-interceptor.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/axios-interceptor.es.js",
-      "require": "./dist/axios-interceptor.umd.js"
-    }
-  },
-  "typings": "./dist/types/index.d.ts",
-  "version": "1.2.9",
+  "name": "2.0",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "update": "npm run build && npm version patch && npm publish"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "peerDependencies": {
-    "axios": "^0.27.2"
+  "dependencies": {
+    "core-js": "^3.8.3",
+    "vue": "^3.2.13"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/js-cookie": "^3.0.2",
-    "@types/lodash": "^4.14.182",
-    "@types/node": "^18.0.0",
-    "@vitejs/plugin-vue": "^2.3.3",
-    "js-cookie": "^3.0.1",
-    "lodash": "^4.17.21",
-    "rollup-plugin-visualizer": "^5.6.0",
-    "typescript": "^4.5.4",
-    "vite": "^2.9.9",
-    "vite-plugin-dts": "^1.2.0",
-    "vue": "^3.2.25",
-    "vue-tsc": "^0.34.7"
-  },
-  "dependencies": {}
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "typescript": "~4.5.5"
+  }
 }

@@ -1,90 +1,27 @@
 <template>
-  <div>123</div>
-  <div>
-    {{ transDict("category_chugui_PTDDFBWL", "ROOT_product_category") }}
-  </div>
-  <div>
-    {{ transDict("category_chugui_CFXJJ", "ROOT_product_category") }}
-  </div>
-  <div>
-    {{ transDict("product_channel_194", "ROOT_ProductChannel") }}
-  </div>
-  <button @click="doSome">111</button>
+  <img alt="Vue logo" src="./assets/logo.png">
+  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref } from "@vue/runtime-core";
-import { axiosUpdateUser } from "./request/axiosUpdateUser";
-import { axiosUser } from "./request/axiosUser";
-import { getDict } from "./utils/getDict";
-import { transDict } from "./utils/transDict";
-const allNeedWait = async () => {
-  axiosUser().then((res) => {
-    console.log("allNeedWait-1", res);
-  });
-  axiosUser().then((res) => {
-    console.log("allNeedWait-2", res);
-  });
-};
-const lastWait = async () => {
-  axiosUser().then((res) => {
-    console.log("lastWait-1", res);
-  });
-  const res = await axiosUser();
-  console.log("lastWait-2", res);
-};
-const firstWait = async () => {
-  const res = await axiosUser();
-  console.log("firstWait-1", res);
-  axiosUser().then((res) => {
-    console.log("firstWait-2", res);
-  });
-};
-const dictAllNeedWait = async () => {
-  getDict("ROOT_product_category").then((res) => {
-    console.log("dictAllNeedWait-1", res);
-  });
-  getDict("ROOT_ProductChannel").then((res) => {
-    console.log("dictAllNeedWait-2", res);
-  });
-};
-const dictLastWait = async () => {
-  getDict("ROOT_product_category").then((res) => {
-    console.log("dictLastWait-1", res);
-  });
-  const res = await getDict("ROOT_ProductChannel");
-  console.log("dictLastWait-2", res);
-};
-const dictFirstWait = async () => {
-  const res = await getDict("ROOT_product_category");
-  console.log("dictFirstWait-1", res);
-  getDict("ROOT_ProductChannel").then((res) => {
-    console.log("dictFirstWait-2", res);
-  });
-};
-const cleanCache = async () => {
-  const user = await axiosUser();
-  console.log("更新前", user.weixin);
-  await axiosUpdateUser({
-    id: user.id,
-    weixin: new Date().getTime().toString(),
-  });
-  setTimeout(async () => {
-    const newUser = await axiosUser();
-    console.log("更新后", newUser.weixin);
-  }, 1000);
-};
-onMounted(() => {
-  // allNeedWait();
-  // lastWait();
-  // firstWait();
-  // dictAllNeedWait();
-  // dictLastWait();
-  // dictFirstWait();
-  // cleanCache();
+<script lang="ts">
+import { defineComponent } from 'vue';
+import HelloWorld from './components/HelloWorld.vue';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    HelloWorld
+  }
 });
-const doSome = async () => {
-  debugger;
-  const user = await axiosUser();
-};
 </script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
