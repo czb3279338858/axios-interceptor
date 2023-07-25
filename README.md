@@ -1,4 +1,4 @@
-# 2.0
+# axios-interceptor
 
 ## Project setup
 ```
