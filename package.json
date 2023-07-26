@@ -1,6 +1,6 @@
 {
   "name": "axios-interceptor",
-  "version": "2.0.2",
+  "version": "2.0.0",
   "description": "Some interceptors of axios, which can cache requests, debounce (the same request will only be sent to the backend once if it is initiated again before responding), and wait for asynchronous actions to end before initiating, etc",
   "files": [
     "./dist"
@@ -17,7 +17,7 @@
     "build": "npm run build:js && npm run build:ts",
     "build:js": "vue-cli-service build --target=lib --entry=./lib/index.ts",
     "build:ts": "tsc ./lib/index.ts --emitDeclarationOnly --declaration --outDir ./dist/types",
-    "publish": "npm run build && npm version patch && npm publish",
+    "release": "npm run build && npm version patch && npm publish",
     "lint": "vue-cli-service lint"
   },
   "peerDependencies": {
