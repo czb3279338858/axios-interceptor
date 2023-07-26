@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAwaitInterceptor, useCacheInterceptor, useDebounceInterceptor, useTimestampInterceptor } from '../lib/index'
 const selfAxios = axios.create()
 useAwaitInterceptor({
-  axios: selfAxios, awaitFun() {
+  axios: selfAxios, awaitFun(config) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve('')
@@ -25,12 +25,12 @@ async function getCurrentUser() {
       platformType: 'MTDS'
     },
     headers: {
-      'Oauth2-Accesstoken': '332f61b4c7a2563aa205a6a8b8e9fae0u',
+      'Oauth2-Accesstoken': '3e8d077362086dc664c6c4b0929a5bebu',
       Appcode: 'MTDS',
       Subappcode: 'MTDSPC001'
     },
     _cache: true,
-    _await: true
+    _awaitSign: true
   })
   console.log(res)
 }

@@ -5,21 +5,19 @@ interface AwaitFun {
 }
 interface AwaitInterceptorArg {
   axios: AxiosInstance,
-  awaitFun?: AwaitFun
+  awaitFun: AwaitFun
 }
 declare module 'axios' {
   export interface AxiosRequestConfig {
     // 当前请求是否等待异步函数执行后才发起
-    _await?: boolean,
-    _awaitFun?: AwaitFun
+    _awaitSign?: boolean | string,
   }
 }
 export function useAwaitInterceptor(arg: AwaitInterceptorArg) {
   const { axios, awaitFun } = arg;
   axios.interceptors.request.use(async (config) => {
-    const awaitFunction = config._awaitFun || awaitFun
-    if (config._await && awaitFunction) {
-      await awaitFunction(config)
+    if (config._awaitSign && awaitFun) {
+      await awaitFun(config)
     }
     return config
   })
