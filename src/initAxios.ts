@@ -1,19 +1,25 @@
-import axios from "axios";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { useAwaitInterceptor, useCacheInterceptor, useDebounceInterceptor, useTimestampInterceptor } from '../lib/index'
 const selfAxios = axios.create()
 useAwaitInterceptor({
-  axios: selfAxios, awaitFun(config) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('')
-      }, 5000)
-    })
+  axios: selfAxios,
+  awaitFun(config: InternalAxiosRequestConfig) {
+    if (config._awaitSign === 'await') {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('')
+        }, 1000)
+      })
+    }
   }
 })
-useTimestampInterceptor({ axios: selfAxios })
+useTimestampInterceptor({
+  axios: selfAxios,
+  timestampKey: 'timestamp'
+})
 useCacheInterceptor({
   axios: selfAxios,
-  isSuccessResponse: (value) => {
+  isSuccessResponse: (value: AxiosResponse): boolean => {
     return value.status >= 200 && value.status < 300 && value.data && value.data.status
   }
 })
@@ -30,7 +36,7 @@ async function getCurrentUser() {
       Subappcode: 'MTDSPC001'
     },
     _cache: true,
-    _awaitSign: true
+    _awaitSign: 'await'
   })
   console.log(res)
 }

@@ -1,7 +1,7 @@
 import { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 interface AwaitFun {
-  (config: InternalAxiosRequestConfig): Promise<unknown>
+  (config: InternalAxiosRequestConfig): Promise<unknown> | unknown
 }
 interface AwaitInterceptorArg {
   axios: AxiosInstance,
