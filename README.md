@@ -47,6 +47,14 @@ useDebounceInterceptor({
   }
 })
 ```
+``` js
+async function getUserInfo() {
+  const res = await selfAxios.get('https://.../getUserInfo', {
+    // This request does not need to be deduplicated, such as the interface for obtaining a unique id.
+    _noDebounce: true,
+  })
+}
+```
 
 - Wait for some asynchronous actions to complete before initiating the request. For example: In WeChat mini programs, you need to obtain the current user’s authorization token before initiating other business requests.
 ``` js
