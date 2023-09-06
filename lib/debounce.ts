@@ -5,12 +5,18 @@ interface DebounceInterceptorArg {
   getKey?: typeof getKey,
   axios: AxiosInstance
 }
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    // 当前接口是否不去抖动，用于获取获取唯一id这样的接口
+    _noDebounce?: boolean,
+  }
+}
 export function useDebounceInterceptor(arg: DebounceInterceptorArg) {
   const { axios } = arg;
-  const getKeyFun = arg.getKey || getKey;
   const promiseMap = new Map<string, AxiosPromise>()
   const resolveMap = new Map<string, (value: AxiosResponse<any, any> | PromiseLike<AxiosResponse<any, any>>) => void>()
   axios.interceptors.request.use(function (config): InternalAxiosRequestConfig {
+    if (config._noDebounce) return config
     const key = getKey(config)
     const adapterPromise = promiseMap.get(key)
     if (adapterPromise) {
