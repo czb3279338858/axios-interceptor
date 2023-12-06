@@ -1,6 +1,6 @@
 {
   "name": "axios-interceptor",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Some interceptors of axios, which can cache requests, debounce (the same request will only be sent to the backend once if it is initiated again before responding), and wait for asynchronous actions to end before initiating, etc",
   "files": [
     "./dist"
