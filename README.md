@@ -10,6 +10,7 @@ npm install axios-interceptor
 ``` js
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { useCacheInterceptor } from 'axios-interceptor'
+import { ref } from 'vue'
 export const selfAxios = axios.create()
 
 useCacheInterceptor({
@@ -21,6 +22,14 @@ useCacheInterceptor({
   // Optional, used to determine the uniqueness of a request. The default getKey logic is listed separately below.
   getKey(config: InternalAxiosRequestConfig): string {
    ... 
+  },
+  // Optional, in vue, when you want to cache data that is responsive, you can do this.
+  setCache(cacheMap: CacheMap, key: string, response: AxiosResponse){
+    const refResponse = {
+      ...response,
+      data:ref(response.data)
+    }
+    cacheMap.set(key, refResponse)
   }
 })
 ```
@@ -28,7 +37,22 @@ useCacheInterceptor({
 async function getUserInfo() {
   const res = await selfAxios.get('https://.../getUserInfo', {
     // This request needs to cache the response data.
-    _cache: true,
+    _cache: true
+  })
+}
+```
+``` ts
+async function getUserInfo() {
+  const res = await selfAxios.get('https://.../postUserInfo', {
+    // Updated the user data, and deleted the cache of the possible user data retrieval interface in the cacheMap.
+    _delCache(cacheMap: CacheMap){
+      for (const [key, value] of cacheMap) {
+        if (value.config.url?.includes('https://.../getUserInfo')) {
+          cacheMap.delete(key)
+          break
+        }
+      }
+    }
   })
 }
 ```
