@@ -5,10 +5,7 @@ import { InternalAxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios"
 interface CacheInterceptorArg {
   getKey?: typeof getKey,
   axios: AxiosInstance,
-  isSuccessResponse?: typeof isSuccessResponse,
-  // 设置缓存的方法
-  // 当和vue这种框架配合使用，希望缓存的数据是响应数据
-  setCache?: (cacheMap: CacheMap, key: string, response: AxiosResponse) => void
+  isSuccessResponse?: typeof isSuccessResponse
 }
 type CacheMap = Map<string, AxiosResponse>
 
@@ -26,9 +23,6 @@ declare module 'axios' {
 export function useCacheInterceptor(arg: CacheInterceptorArg) {
   const { axios } = arg;
   const getKeyFun = arg.getKey || getKey;
-  const setCacheMap = arg.setCache || function (cacheMap: CacheMap, key: string, response: AxiosResponse) {
-    cacheMap.set(key, response)
-  }
   const isSuccessResponseFun = arg.isSuccessResponse || isSuccessResponse
   const cacheMap: CacheMap = new Map();
   axios.interceptors.request.use(function (config): InternalAxiosRequestConfig {
@@ -56,7 +50,7 @@ export function useCacheInterceptor(arg: CacheInterceptorArg) {
         const key = getKeyFun(config)
         const response = cacheMap.get(key)
         if (!response) {
-          setCacheMap(cacheMap, key, value)
+          cacheMap.set(key, value)
         }
       }
       if (config._delCache) config._delCache(cacheMap)
