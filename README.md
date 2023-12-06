@@ -42,7 +42,7 @@ async function getUserInfo() {
 }
 ```
 ``` ts
-async function getUserInfo() {
+async function postUserInfo() {
   const res = await selfAxios.get('https://.../postUserInfo', {
     // Updated the user data, and deleted the cache of the possible user data retrieval interface in the cacheMap.
     _delCache(cacheMap: CacheMap){
