@@ -9,7 +9,9 @@ interface AwaitInterceptorArg {
 }
 declare module 'axios' {
   export interface AxiosRequestConfig {
-    // 当前请求是否等待异步函数执行后才发起
+    /**
+     * 当前请求是否等待异步函数执行后才发起
+     */
     _awaitSign?: boolean | string,
   }
 }

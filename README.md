@@ -26,7 +26,12 @@ useCacheInterceptor({
 ```
 ``` js
 async function getUserInfo() {
-  const res = await selfAxios.get('https://.../getUserInfo', {
+  const { 
+    data,
+    // Requests with the _cache parameter will additionally return a _delCacheFun in the response to delete this cache.
+    // This is useful for limiting the lifetime of the cache. For example, a cache for an interface is only valid on the current page, and when the page is destroyed, the cache should also be destroyed.
+    _delCacheFun
+  } = await selfAxios.get('https://.../getUserInfo', {
     // This request needs to cache the response data.
     _cache: true
   })

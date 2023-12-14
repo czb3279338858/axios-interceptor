@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    {{ JSON.stringify(userInfo)  }}
     <h1>{{ msg }}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
@@ -32,6 +33,7 @@
 </template>
 
 <script lang="ts">
+import { getCurrentUser } from '@/getCurrentUse';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -39,6 +41,27 @@ export default defineComponent({
   props: {
     msg: String,
   },
+  data(){
+    return {
+      userInfo:null as any,
+      delCacheSet:[] as (()=>void)[]
+    }
+  },
+  created(){
+    this.doSome()
+  },
+  unmounted(){
+    this.delCacheSet.forEach(d=>d())
+  },
+  methods:{
+    async doSome(){
+      const {data,_delCacheFun} = await getCurrentUser()
+      if(_delCacheFun){
+        this.delCacheSet.push(_delCacheFun)
+      }
+      this.userInfo=data
+    },
+  }
 });
 </script>
 
