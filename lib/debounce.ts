@@ -22,12 +22,12 @@ export function useDebounceInterceptor(arg: DebounceInterceptorArg) {
     if (adapterPromise) {
       return {
         ...config,
-        adapter(config) {
+        adapter() {
           return adapterPromise
         }
       }
     } else {
-      const adapterPromise: AxiosPromise = new Promise((resolve, reject) => {
+      const adapterPromise: AxiosPromise = new Promise((resolve) => {
         resolveMap.set(key, resolve)
       })
       promiseMap.set(key, adapterPromise)

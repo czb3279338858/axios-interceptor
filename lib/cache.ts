@@ -40,8 +40,8 @@ export function useCacheInterceptor(arg: CacheInterceptorArg) {
       if (response) {
         return {
           ...config,
-          adapter(config) {
-            return new Promise((resolve, reject) => {
+          adapter() {
+            return new Promise((resolve) => {
               resolve(response)
             })
           }

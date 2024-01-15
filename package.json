@@ -1,41 +1,29 @@
 {
   "name": "axios-interceptor",
-  "version": "2.0.8",
-  "description": "Some interceptors of axios, which can cache requests, debounce (the same request will only be sent to the backend once if it is initiated again before responding), and wait for asynchronous actions to end before initiating, etc",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "files": [
-    "./dist"
+    "dist"
   ],
-  "main": "./dist/axios-interceptor.umd.min.js",
+  "main": "./dist/axios-interceptor.umd.cjs",
+  "module": "./dist/axios-interceptor.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    "import": "./dist/axios-interceptor.umd.min.js",
-    "require": "./dist/axios-interceptor.common.js"
+    "types": "./dist/index.d.ts",
+    "import": "./dist/axios-interceptor.js",
+    "require": "./dist/axios-interceptor.umd.cjs"
   },
-  "types": "./dist/types/index.d.ts",
-  "repository": "https://github.com/czb3279338858/axios-interceptor/tree/2.0",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "npm run build:js && npm run build:ts",
-    "build:js": "vue-cli-service build --target=lib --entry=./lib/index.ts",
-    "build:ts": "tsc ./lib/index.ts --emitDeclarationOnly --declaration --outDir ./dist/types",
-    "release": "npm run build && npm version patch && npm publish",
-    "lint": "vue-cli-service lint"
-  },
-  "peerDependencies": {
-    "axios": "^1.4.0"
+    "dev": "vite",
+    "build": "tsc && vite build"
   },
   "devDependencies": {
-    "axios": "^1.4.0",
-    "core-js": "^3.8.3",
-    "vue": "^3.2.13",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "@vue/eslint-config-typescript": "^9.1.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "typescript": "~4.5.5"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.0"
+  },
+  "peerDependencies": {
+    "axios": "^1.6.5"
   }
 }
