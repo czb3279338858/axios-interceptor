@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "release": "npm run build && npm version patch && npm publish"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
