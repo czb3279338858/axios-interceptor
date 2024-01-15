@@ -28,6 +28,6 @@
     "vite-plugin-dts": "^3.7.0"
   },
   "peerDependencies": {
-    "axios": "^1.6.5"
+    "axios": "^0 || ^1"
   }
 }
