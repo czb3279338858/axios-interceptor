@@ -1,6 +1,6 @@
 {
   "name": "axios-interceptor",
-  "private": true,
+  "description": "Some interceptors of axios, which can cache requests, debounce (the same request will only be sent to the backend once if it is initiated again before responding), and wait for asynchronous actions to end before initiating, etc",
   "version": "2.0.8",
   "type": "module",
   "files": [
@@ -14,6 +14,7 @@
     "import": "./dist/axios-interceptor.js",
     "require": "./dist/axios-interceptor.umd.cjs"
   },
+  "repository": "https://github.com/czb3279338858/axios-interceptor/tree/2.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
