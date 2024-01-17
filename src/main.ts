@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import { useCacheInterceptor } from "../lib/cache";
 import { useDebounceInterceptor } from "../lib/debounce";
 import { useTimestampInterceptor } from "../lib/timestamp";
@@ -40,10 +40,10 @@ async function reqGetCurrentUser() {
 }
 (async function init() {
   reqGetCurrentUser().then(r => {
-    debugger
+    console.log(r)
   })
   const a = await reqGetCurrentUser()
-  debugger
+  console.log(a)
   const ret = await reqGetCurrentUser()
-  debugger
+  console.log(ret)
 })()
