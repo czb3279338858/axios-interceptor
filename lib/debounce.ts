@@ -20,12 +20,8 @@ export function useDebounceInterceptor(arg: DebounceInterceptorArg) {
     const key = getKey(config)
     const adapterPromise = promiseMap.get(key)
     if (adapterPromise) {
-      return {
-        ...config,
-        adapter() {
-          return adapterPromise
-        }
-      }
+      config.adapter = () => adapterPromise
+      return config
     } else {
       const adapterPromise: AxiosPromise = new Promise((resolve) => {
         resolveMap.set(key, resolve)

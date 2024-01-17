@@ -38,14 +38,12 @@ export function useCacheInterceptor(arg: CacheInterceptorArg) {
       const key = getKeyFun(config);
       const response = cacheMap.get(key)
       if (response) {
-        return {
-          ...config,
-          adapter() {
-            return new Promise((resolve) => {
-              resolve(response)
-            })
-          }
+        config.adapter = () => {
+          return new Promise((resolve) => {
+            resolve(response)
+          })
         }
+        return config
       }
     }
     return config
@@ -53,18 +51,17 @@ export function useCacheInterceptor(arg: CacheInterceptorArg) {
 
   axios.interceptors.response.use(function (value): AxiosResponse {
     const config = value.config
-    const ret: AxiosResponse = { ...value }
-    if (isSuccessResponseFun(ret)) {
+    if (isSuccessResponseFun(value)) {
       if (config._cache) {
         const key = getKeyFun(config)
         const response = cacheMap.get(key)
         if (!response) {
-          ret._delCacheFun = () => cacheMap.delete(key)
-          cacheMap.set(key, ret)
+          value._delCacheFun = () => cacheMap.delete(key)
+          cacheMap.set(key, value)
         }
       }
       if (config._delCache) config._delCache(cacheMap)
     }
-    return ret
+    return value
   })
 }
