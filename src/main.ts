@@ -1,31 +1,19 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { useCacheInterceptor } from "../lib/cache";
 import { useDebounceInterceptor } from "../lib/debounce";
 import { useTimestampInterceptor } from "../lib/timestamp";
 import { merge } from 'lodash-es'
 
 const selfAxios = axios.create()
-let i = 0
-selfAxios.defaults.validateStatus = (status) => {
-  return i++ ? status >= 200 && status < 300 : false
-}
 useCacheInterceptor({ axios: selfAxios })
 useTimestampInterceptor({ axios: selfAxios })
-
-useDebounceInterceptor({
-  axios: selfAxios, requestListChange(configList, err) {
-    if (configList.length && err) {
-      configList.forEach(config => selfAxios.request(config))
-      debugger
-    }
-  },
-})
+useDebounceInterceptor({ axios: selfAxios })
 
 merge(selfAxios.defaults, {
   baseURL: "https://apigatewayuat.oppein.com",
   headers: {
     common: {
-      'Oauth2-AccessToken': 'd7e50504972d709a0d62037c1cb38e97u',
+      'Oauth2-AccessToken': 'beaca69341df8952dbbb1f3ed6d02a2eu',
       AppCode: 'CAXA',
       SubAppCode: "CAXAPC001"
     }
@@ -39,11 +27,8 @@ async function reqGetCurrentUser() {
   return data
 }
 (async function init() {
-  reqGetCurrentUser().then(r => {
-    console.log(r)
-  })
-  const a = await reqGetCurrentUser()
-  console.log(a)
+  reqGetCurrentUser()
+  await reqGetCurrentUser()
   const ret = await reqGetCurrentUser()
-  console.log(ret)
+  debugger
 })()

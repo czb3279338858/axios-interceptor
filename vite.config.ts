@@ -4,8 +4,8 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
   plugins: [
     dts({
-      outDir: './dist/types',
-      include: 'lib'
+      // 合并.d.ts为一个文件
+      rollupTypes: true,
     }),
   ],
   build: {

@@ -8,9 +8,9 @@
   ],
   "main": "./dist/axios-interceptor.umd.cjs",
   "module": "./dist/axios-interceptor.js",
-  "types": "./dist/types/main.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    "types": "./dist/types/main.d.ts",
+    "types": "./dist/index.d.ts",
     "import": "./dist/axios-interceptor.js",
     "require": "./dist/axios-interceptor.umd.cjs"
   },

@@ -34,15 +34,16 @@ export function useCacheInterceptor(arg: CacheInterceptorArg) {
   const isSuccessResponseFun = arg.isSuccessResponse || isSuccessResponse
   const cacheMap: CacheMap = new Map();
   axios.interceptors.request.use(function (config): InternalAxiosRequestConfig {
-    if (config._noHandle || !config._cache) return config
-    const key = getKeyFun(config);
-    const response = cacheMap.get(key)
-    if (response) {
-      config._noHandle = true
-      config.adapter = () => {
-        return new Promise((resolve) => {
-          resolve(response)
-        })
+    if (config._cache) {
+      const key = getKeyFun(config);
+      const response = cacheMap.get(key)
+      if (response) {
+        config.adapter = () => {
+          return new Promise((resolve) => {
+            resolve(response)
+          })
+        }
+        return config
       }
     }
     return config
