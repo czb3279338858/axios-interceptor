@@ -13,7 +13,7 @@ merge(selfAxios.defaults, {
   baseURL: "https://apigatewayuat.oppein.com",
   headers: {
     common: {
-      'Oauth2-AccessToken': 'beaca69341df8952dbbb1f3ed6d02a2eu',
+      'Oauth2-AccessToken': '853140873a38f6a70fe8754c90e828c4u',
       AppCode: 'CAXA',
       SubAppCode: "CAXAPC001"
     }
@@ -21,10 +21,12 @@ merge(selfAxios.defaults, {
 })
 async function reqGetCurrentUser() {
   const axiosParams = { platformType: 'MTDS' }
-  const {
-    data: { data }
-  } = await selfAxios.get<any>('/ucenterapi/uc/internal/common/getCurrentUser', { params: axiosParams, _cache: true })
-  return data
+  try {
+    const { data: { data } } = await selfAxios.get<any>('/ucenterapi/uc/internal/common/getCurrentUser2', { params: axiosParams, _cache: true })
+    return data
+  } catch (error) {
+    console.log(error)
+  }
 }
 (async function init() {
   reqGetCurrentUser().then(a => {
