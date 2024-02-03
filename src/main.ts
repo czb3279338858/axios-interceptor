@@ -1,23 +1,50 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import { setupCounter } from '../lib/main'
+import axios, { AxiosError, AxiosRequestConfig } from 'axios'
+import { useInterceptor } from '../lib/main'
+const selfAxios = axios.create()
+selfAxios.defaults.headers.common = {
+  Appcode: 'MTDS',
+  Subappcode: 'MTDSPC001',
+  "Oauth2-Accesstoken": 'c18fd83e3d116cf418c2a1c46707b0dfu'
+}
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
-
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const requestListChange = (configs: AxiosRequestConfig[]) => {
+  console.log(configs)
+}
+const isRetry = (err: AxiosError) => {
+  return !!err.response?.status && err.response.status >= 500 && err.response.status < 600
+}
+const { doRetry } = useInterceptor({
+  axios: selfAxios,
+  useCache: {
+    isSuccess: (value) => {
+      return value.data.status
+    }
+  },
+  useDebounce: true,
+  useTimestamp: true,
+  useRetry: {
+    isRetry
+  },
+  useChange: {
+    requestListChange
+  }
+})
+function getCurrentUser() {
+  return selfAxios.get('https://apigatewayuat.oppein.com/ucenterapi/uc/internal/common/getCurrentUser', {
+    params: {
+      platformType: 'MTDS'
+    },
+    _cache: true,
+    _delCache: (cacheMap) => {
+    }
+  })
+}
+async function init() {
+  getCurrentUser().then(r => console.log(1, r))
+  const r = await getCurrentUser()
+  console.log(2, r)
+  getCurrentUser().then(r => console.log(3, r))
+  const r1 = await getCurrentUser()
+  console.log(4, r1)
+}
+init()

@@ -10,6 +10,6 @@ export default defineConfig({
     }
   },
   plugins: [dtsPlugin({
-    rollupTypes: true
+    outDir: './dist/types',
   })]
 })
