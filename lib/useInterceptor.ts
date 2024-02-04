@@ -8,14 +8,14 @@ interface UseInterceptorArg {
   axios: AxiosInstance,
   getKey?: typeof innerGetKey,
   useCache?: {
-    isSuccess: (value: AxiosResponse) => boolean
+    isSuccess: typeof innerIsSuccess
   } | true,
   useDebounce?: boolean,
   useTimestamp?: {
     timestampKey?: string
   } | true,
   useRetry?: {
-    isRetry?: (err: AxiosError) => boolean
+    isRetry?: typeof innerIsRetry
   } | true,
   useChange?: {
     requestListChange: (configs: AxiosRequestConfig[]) => void
@@ -86,7 +86,6 @@ export function useInterceptor(arg: UseInterceptorArg) {
   const retryConfigs = new Set<AxiosRequestConfig>()
 
   axios.interceptors.request.use(config => {
-    if (config._requestId) return config
     const key = getKey(config)
     if (useCache && config._cache) {
       const response = cacheMap.get(key)
@@ -95,6 +94,9 @@ export function useInterceptor(arg: UseInterceptorArg) {
         return config
       }
     }
+
+    if (config._requestId) return config
+
     if (useDebounce && !config._noDebounce) {
       const debounceValue = debounceMap.get(key)
       if (debounceValue) {
