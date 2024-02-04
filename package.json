@@ -1,24 +1,25 @@
 {
-  "name": "vite-project",
-  "private": true,
-  "version": "0.0.0",
+  "name": "axios-interceptor",
+  "description": "axios interceptor can implement features such as response data caching, deduplication of identical requests, adding timestamps to get requests, re-initiating failed requests, and listening for changes in the queue of pending requests.",
+  "version": "3.0.0",
   "type": "module",
   "files": [
-    "dist",
-    "index.d.ts"
+    "dist"
   ],
-  "main": "./dist/counter.umd.cjs",
-  "module": "./dist/counter.js",
-  "types": "./index.d.ts",
+  "main": "./dist/axios-interceptor.umd.cjs",
+  "module": "./dist/axios-interceptor.js",
+  "types": "./types/main.d.ts",
   "exports": {
-    "types": "./index.d.ts",
-    "import": "./dist/counter.js",
-    "require": "./dist/counter.umd.cjs"
+    "types": "./types/main.d.ts",
+    "import": "./dist/axios-interceptor.js",
+    "require": "./dist/axios-interceptor.umd.cjs"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "release": "npm run build && npm version patch && npm publish"
   },
+  "repository": "https://github.com/czb3279338858/axios-interceptor/tree/3.0",
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
     "typescript": "^5.3.3",
@@ -26,7 +27,7 @@
     "vite-plugin-dts": "^3.7.2"
   },
   "peerDependencies": {
-    "axios": "^1.6.7"
+    "axios": "^0 || ^1"
   },
   "dependencies": {
     "lodash-es": "^4.17.21"
