@@ -10,7 +10,7 @@
   "module": "./dist/axios-interceptor.js",
   "types": "./types/main.d.ts",
   "exports": {
-    "types": "./types/main.d.ts",
+    "types": "./dist/types/main.d.ts",
     "import": "./dist/axios-interceptor.js",
     "require": "./dist/axios-interceptor.umd.cjs"
   },
