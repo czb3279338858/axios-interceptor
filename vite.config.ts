@@ -7,7 +7,8 @@ export default defineConfig({
       entry: './lib/main.ts',
       name: 'AxiosInterceptor',
       fileName: 'axios-interceptor'
-    }
+    },
+    target:'es2015'
   },
   plugins: [dtsPlugin({
     outDir: './dist/types',
