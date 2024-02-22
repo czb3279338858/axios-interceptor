@@ -138,7 +138,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
     return config
   })
 
-  axios.interceptors.response.use(response => {
+  newAxios.interceptors.response.use(response => {
     const key = getKey(response.config)
     if (response.config._requestId) {
       if (useDebounce && !response.config._noDebounce) {
