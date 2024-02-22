@@ -1,4 +1,5 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import Axios from "axios"
 import { innerGetKey, paramsExcludeKey } from "./getKey";
 import { cloneDeep } from "lodash-es";
 import { innerIsSuccess } from "./isSuccess";
@@ -52,6 +53,7 @@ declare module 'axios' {
   }
 }
 export function useInterceptor(arg: UseInterceptorArg) {
+  const newAxios = Axios.create()
   const { axios, useCache, useDebounce, useTimestamp, useRetry, useChange } = arg
   const getKey = arg.getKey || innerGetKey
   const isSuccess = useCache !== true && useCache?.isSuccess || innerIsSuccess
@@ -119,7 +121,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
     if (useTimestamp && realConfig.method?.toUpperCase() === 'GET') {
       realConfig.params[timestampKey] = new Date().getTime()
     }
-    axios.request(realConfig)
+    newAxios.request(realConfig)
 
     let resolve
     let reject
@@ -188,7 +190,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
 
   function doRetry() {
     retryConfigs.forEach(config => {
-      axios.request(config)
+      newAxios.request(config)
     })
     retryConfigs.clear()
   }
