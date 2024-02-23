@@ -24,7 +24,8 @@
     "@types/lodash-es": "^4.17.12",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
-    "vite-plugin-dts": "^3.7.2"
+    "vite-plugin-dts": "^3.7.2",
+    "axios":"^1"
   },
   "peerDependencies": {
     "axios": "^0 || ^1"
