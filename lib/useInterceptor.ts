@@ -1,5 +1,5 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import Axios from "axios"
+import iAxios from "axios"
 import { innerGetKey, paramsExcludeKey } from "./getKey";
 import { cloneDeep } from "lodash-es";
 import { innerIsSuccess } from "./isSuccess";
@@ -53,7 +53,7 @@ declare module 'axios' {
   }
 }
 export function useInterceptor(arg: UseInterceptorArg) {
-  const newAxios = Axios.create()
+  const newAxios = iAxios.create()
   const { axios, useCache, useDebounce, useTimestamp, useRetry, useChange } = arg
   const getKey = arg.getKey || innerGetKey
   const isSuccess = useCache !== true && useCache?.isSuccess || innerIsSuccess

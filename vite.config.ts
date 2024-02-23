@@ -8,7 +8,10 @@ export default defineConfig({
       name: 'AxiosInterceptor',
       fileName: 'axios-interceptor'
     },
-    target:'es2015'
+    target: 'es2015',
+    rollupOptions: {
+      external: ["axios"]
+    }
   },
   plugins: [dtsPlugin({
     outDir: './dist/types',

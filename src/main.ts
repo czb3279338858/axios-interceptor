@@ -1,17 +1,20 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useInterceptor } from '../lib/main'
+import { merge } from 'lodash-es'
 const selfAxios = axios.create()
-selfAxios.defaults.headers.common = {
-  Appcode: 'MTDS',
-  Subappcode: 'MTDSPC001',
-  "Oauth2-Accesstoken": '58c32fc00a3bdd28e4011237d34c0fe8u'
-}
+merge(selfAxios.defaults, {
+  headers: {
+    common: {
+      Appcode: 'MTDS',
+      Subappcode: 'MTDSPC001',
+      "Oauth2-Accesstoken": 'e1cbefff5890bdd4aba4c1c822dccc2du'
+    }
+  },
+  baseURL: 'https://apigatewayuat.oppein.com'
+})
 
 const requestListChange = (configs: AxiosRequestConfig[]) => {
   console.log(configs)
-}
-const isRetry = (err: AxiosError) => {
-  return !!err.response?.status && err.response.status >= 500 && err.response.status < 600
 }
 const {
   // A method for re-initiating failed requests.
@@ -20,7 +23,7 @@ const {
   axios: selfAxios,
   // Using the data caching feature, data is only cached when isSuccess returns true.
   useCache: {
-    isSuccess: (value: AxiosResponse) => value.status >= 200 && value.status < 300
+    isSuccess: (v: AxiosResponse) => v.status >= 200 && v.status < 300 && v.data.code === '100000'
   },
   // Using the request deduplication feature, when a request has not returned, but is initiated again elsewhere, they will be merged into one.
   // But be aware that some interfaces cannot be deduplicated, such as the interface for obtaining the unique id of the uploaded file.
@@ -36,8 +39,9 @@ const {
     requestListChange
   }
 })
+
 function getCurrentUser() {
-  return selfAxios.get('https://apigatewayuat.oppein.com/ucenterapi/uc/internal/common/getCurrentUser', {
+  return selfAxios.get('/ucenterapi/uc/internal/common/getCurrentUser', {
     params: {
       platformType: 'MTDS'
     },
@@ -46,6 +50,9 @@ function getCurrentUser() {
     }
   })
 }
+export async function reqGetDetailByIds(ids: string[]) {
+  return selfAxios.post('/bsplatform/commodity/getDetailByIds', ids)
+}
 async function init() {
   getCurrentUser().then(r => console.log(1, r))
   const r = await getCurrentUser()
@@ -53,5 +60,6 @@ async function init() {
   getCurrentUser().then(r => console.log(3, r))
   const r1 = await getCurrentUser()
   console.log(4, r1)
+  reqGetDetailByIds(['1888453677539270656'])
 }
 init()
