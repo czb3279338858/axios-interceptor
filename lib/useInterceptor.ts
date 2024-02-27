@@ -119,7 +119,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
     const realConfig = cloneDeep(config)
     realConfig._requestId = requestId
     if (useTimestamp && realConfig.method?.toUpperCase() === 'GET') {
-      realConfig.params[timestampKey] = new Date().getTime()
+      realConfig.params ? (realConfig.params[timestampKey] = new Date().getTime()) : (realConfig.params = { timestampKey: new Date().getTime() })
     }
     newAxios.request(realConfig)
 
