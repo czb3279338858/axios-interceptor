@@ -70,6 +70,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
   }>()
 
   let requestId = 1
+  /** 正在请求中的接口 */
   const realMap = new Map<number, {
     promise: Promise<AxiosResponse<unknown, unknown>>,
     resolve: (value: unknown) => void,
@@ -88,23 +89,35 @@ export function useInterceptor(arg: UseInterceptorArg) {
   const retryConfigs = new Set<AxiosRequestConfig>()
 
   axios.interceptors.request.use(config => {
+    if (config._requestId) {
+      const realConfig = cloneDeep(config)
+      newAxios.request(realConfig)
+      const real = realMap.get(config._requestId)
+      if (real) {
+        config.adapter = () => real.promise
+      }
+      return config
+    }
+    // 不带id的config
     const key = getKey(config)
     if (useCache && config._cache) {
       const response = cacheMap.get(key)
+      // 有缓存的话直接响应接口
       if (response) {
         config.adapter = () => Promise.resolve(response)
         return config
       }
     }
 
-    if (config._requestId) return config
 
     if (useDebounce && !config._noDebounce) {
       const debounceValue = debounceMap.get(key)
       if (debounceValue) {
+        // 有debounce直接返回debouncePromise
         config.adapter = () => debounceValue.promise
         return config
       } else {
+        // 没有创建debouncePromise
         let resolve
         let reject
         const promise = new Promise<AxiosResponse<unknown, unknown>>((res, rej) => {
@@ -116,75 +129,96 @@ export function useInterceptor(arg: UseInterceptorArg) {
       }
     }
 
+    // 设置id
     const realConfig = cloneDeep(config)
     realConfig._requestId = requestId
+
+    // 给真实请求添加时间戳
     if (useTimestamp && realConfig.method?.toUpperCase() === 'GET') {
       realConfig.params ? (realConfig.params[timestampKey] = new Date().getTime()) : (realConfig.params = { [timestampKey]: new Date().getTime() })
     }
+    // 发起真实请求
     newAxios.request(realConfig)
 
+    // 发起请求的接口设置回调
     let resolve
     let reject
     const promise = new Promise<AxiosResponse<unknown, unknown>>((res, rej) => {
       resolve = res
       reject = rej
     })
+    // 添加真实请求队列
     if (resolve && reject)
       realMap.set(requestId, { promise, reject, resolve, config: realConfig })
+    // 通知队列改变
     callRequestListChange()
     requestId++
 
+    // 所有页面请求都返回了promise，等待realMap的回调或者debounceMap的回调被调用
     config.adapter = () => promise
     return config
   })
 
   newAxios.interceptors.response.use(response => {
-    const key = getKey(response.config)
-    if (response.config._requestId) {
+    const _requestId = response.config._requestId
+    if (_requestId) {
+      const resolveResponse = cloneDeep(response)
+      delete resolveResponse.config._requestId
+      const key = getKey(response.config)
       if (useDebounce && !response.config._noDebounce) {
         const debounceParams = debounceMap.get(key)
+        // 响应debounce
         if (debounceParams) {
-          debounceParams.resolve(response)
+          debounceParams.resolve(resolveResponse)
           debounceMap.delete(key)
         }
       }
       if (useCache && isSuccess(response)) {
+        // 响应cache
         if (response.config._cache) {
           response._delCache = () => cacheMap.delete(key)
-          cacheMap.set(key, response)
+          cacheMap.set(key, resolveResponse)
         }
         if (response.config._delCache) {
           response.config._delCache(cacheMap)
         }
       }
-      const real = realMap.get(response.config._requestId)
+      // 响应真实请求列表
+      const real = realMap.get(_requestId)
       if (real) {
-        real.resolve(response)
-        realMap.delete(response.config._requestId)
+        real.resolve(resolveResponse)
+        realMap.delete(_requestId)
         callRequestListChange()
       }
     }
     return response
   }, (err: AxiosError) => {
-    if (err.config?._requestId) {
-      const key = getKey(err.config)
+    if (!err.config) return
+    const key = getKey(err.config)
+    const _requestId = err.config?._requestId
+    if (_requestId) {
+      // 允许重试，重试的config带有_requestId
       if (useRetry && isRetry(err)) {
         retryConfigs.add(err.config)
         return err
       }
-      const real = realMap.get(err.config._requestId)
+      // 不允许重试
+      const real = realMap.get(_requestId)
+      const resolveErr = cloneDeep(err)
+      delete resolveErr.config?._requestId
+      // 响应真实请求
       if (real) {
-        real.reject(err)
-        realMap.delete(err.config._requestId)
+        real.reject(resolveErr)
+        realMap.delete(_requestId)
         callRequestListChange()
       }
+      // 响应debounce
       const debounceParams = debounceMap.get(key)
       if (debounceParams) {
-        debounceParams.reject(err)
+        debounceParams.reject(resolveErr)
         debounceMap.delete(key)
       }
     }
-
     return err
   })
 
