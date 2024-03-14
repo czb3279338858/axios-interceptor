@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
+import { AxiosResponse } from "axios";
 
-export function innerIsRetry(err: AxiosError): boolean {
-  return !!err.response?.status && err.response.status >= 500 && err.response.status < 600
+export function innerIsRetry(response: AxiosResponse<unknown, any>): boolean {
+  return !!response?.status && response.status >= 500 && response.status < 600
 }

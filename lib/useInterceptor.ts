@@ -162,6 +162,11 @@ export function useInterceptor(arg: UseInterceptorArg) {
   newAxios.interceptors.response.use(response => {
     const _requestId = response.config._requestId
     if (_requestId) {
+      // 正常响应的数据也可以重新发起请求
+      if (useRetry && response && isRetry(response)) {
+        retryConfigs.add(response.config)
+        return response
+      }
       const resolveResponse = cloneDeep(response)
       delete resolveResponse.config._requestId
       const key = getKey(response.config)
@@ -198,7 +203,7 @@ export function useInterceptor(arg: UseInterceptorArg) {
     const _requestId = err.config?._requestId
     if (_requestId) {
       // 允许重试，重试的config带有_requestId
-      if (useRetry && isRetry(err)) {
+      if (useRetry && err.response && isRetry(err.response)) {
         retryConfigs.add(err.config)
         return err
       }
